@@ -20,7 +20,7 @@ SongBase is a Java-based music player application utilizing JLayer library that 
 ## 🖥️Technologies Used
 
 <img align="left" alt="JAVA" width="70px" style="padding-right:10px;" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"/>
-<br>
+<br><br><br>
 
 ## ⬇️ Installation
 
