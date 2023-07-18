@@ -1,0 +1,7 @@
+src filter=lfs diff=lfs merge=lfs -text
+build filter=lfs diff=lfs merge=lfs -text
+dist filter=lfs diff=lfs merge=lfs -text
+nbproject filter=lfs diff=lfs merge=lfs -text
+test filter=lfs diff=lfs merge=lfs -text
+build.xml filter=lfs diff=lfs merge=lfs -text
+manifest.mf filter=lfs diff=lfs merge=lfs -text
