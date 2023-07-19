@@ -20,6 +20,7 @@ public class display extends javax.swing.JFrame {
     private threads.PlayerThread currentPlaybackThread;
     private boolean isPaused = false;
     private String stat = null;
+    private boolean loop = false;
     
     public display() {
         initComponents();
@@ -28,11 +29,13 @@ public class display extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         sqlInstance.showData(model);
         playerThreads = new threads();
+        playerThreads.setDisplayInstance(this);
+
         
         
         TableColumn column = jTable1.getColumnModel().getColumn(0); // Assuming the "▶" symbol is in the first column
         column.setCellRenderer(new CustomRenderer());
-        
+        interrupt();
         jTable1.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
                 int row = jTable1.rowAtPoint(e.getPoint());
@@ -49,10 +52,12 @@ public class display extends javax.swing.JFrame {
                         currentPlaybackThread.close(); // Stop the current playback thread
                         currentPlaybackThread = null; // Reset the currentPlaybackThread reference
                     }
-                    currentPlaybackThread = playerThreads.new PlayerThread(songFilePath, false);
+                    currentPlaybackThread = playerThreads.new PlayerThread(songFilePath, loop,display.this);
                     currentPlaybackThread.start();
-                    
+                    jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/pause.png")));
+                    jLabel9.setToolTipText("Stop the playback first!");
                 }
+
             }
         });
 
@@ -65,7 +70,15 @@ public class display extends javax.swing.JFrame {
         }
     }
     
-
+    public void interrupt(){
+            jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/play.png")));
+            jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/def.png")));
+            jLabel2.setText("Song Title");
+            jLabel3.setText("Artist");
+            jTextArea1.setText("");
+            jLabel9.setToolTipText("Loop");
+            currentPlaybackThread = null;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -81,6 +94,8 @@ public class display extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         controlPanel = new javax.swing.JPanel();
+        loopPanel = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
         pausePanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         stopPanel = new javax.swing.JPanel();
@@ -171,9 +186,38 @@ public class display extends javax.swing.JFrame {
         controlPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         controlPanel.setForeground(new java.awt.Color(57, 57, 57));
 
+        loopPanel.setBackground(new java.awt.Color(27, 27, 27));
+        loopPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                loopPanelMouseClicked(evt);
+            }
+        });
+
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/loop.png"))); // NOI18N
+        jLabel9.setToolTipText("Loop");
+        jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel9MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout loopPanelLayout = new javax.swing.GroupLayout(loopPanel);
+        loopPanel.setLayout(loopPanelLayout);
+        loopPanelLayout.setHorizontalGroup(
+            loopPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        loopPanelLayout.setVerticalGroup(
+            loopPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(loopPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         pausePanel.setBackground(new java.awt.Color(27, 27, 27));
 
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/pause.png"))); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/play.png"))); // NOI18N
         jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel4MouseClicked(evt);
@@ -210,17 +254,17 @@ public class display extends javax.swing.JFrame {
         stopPanel.setLayout(stopPanelLayout);
         stopPanelLayout.setHorizontalGroup(
             stopPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(stopPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, stopPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel5)
                 .addContainerGap())
         );
         stopPanelLayout.setVerticalGroup(
             stopPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(stopPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(12, 12, 12)
+                .addComponent(jLabel5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
@@ -232,12 +276,18 @@ public class display extends javax.swing.JFrame {
                 .addComponent(pausePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(stopPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(475, 475, 475))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(loopPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(444, 444, 444))
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pausePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(stopPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(loopPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/def.png"))); // NOI18N
@@ -320,6 +370,11 @@ public class display extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(27, 27, 27));
 
         jPanel2.setBackground(new java.awt.Color(27, 27, 27));
+        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel2MouseClicked(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
@@ -356,6 +411,11 @@ public class display extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(27, 27, 27));
         jPanel3.setPreferredSize(new java.awt.Dimension(30, 35));
+        jPanel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel3MouseClicked(evt);
+            }
+        });
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
@@ -487,7 +547,7 @@ public class display extends javax.swing.JFrame {
                     .addComponent(lyricsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(controlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -508,30 +568,33 @@ public class display extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        if (stat != "Paused") {
-        stat = "Paused";
-            currentPlaybackThread.pausePlayback();
-            jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/play.png")));
-        } else {
-            stat = "Playing";
-            jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/pause.png")));
-            currentPlaybackThread.resumePlayback();
+        if(currentPlaybackThread != null){
+            if (stat != "Paused") {
+            stat = "Paused";
+                currentPlaybackThread.pausePlayback();
+                jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/play.png")));
+            } else {
+                stat = "Playing";
+                jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/pause.png")));
+                currentPlaybackThread.resumePlayback();
+            }
         }
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
-        playerThreads.stopPlayback();
-        currentPlaybackThread.close();
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/def.png")));
-        jLabel2.setText("Song Title");
-        jLabel3.setText("Artist");
-        jTextArea1.setText("");
-        currentPlaybackThread = null;
+        if(currentPlaybackThread != null){
+            playerThreads.stopPlayback();
+            currentPlaybackThread.close();
+            currentPlaybackThread = null;
+            interrupt();
+            jLabel9.setToolTipText("Loop");
+        }
     }//GEN-LAST:event_jLabel5MouseClicked
 
     private void jLabel7MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseEntered
        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/minihov.png")));
        jPanel3.setBackground(new java.awt.Color(57, 57, 57));
+       jLabel7.setToolTipText("Minimize");
     }//GEN-LAST:event_jLabel7MouseEntered
 
     private void jLabel7MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseExited
@@ -542,6 +605,7 @@ public class display extends javax.swing.JFrame {
     private void jLabel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseEntered
        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/clohov.png")));
        jPanel2.setBackground(new java.awt.Color(57, 57, 57));
+       jLabel6.setToolTipText("Close");
     }//GEN-LAST:event_jLabel6MouseEntered
 
     private void jLabel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseExited
@@ -568,6 +632,46 @@ public class display extends javax.swing.JFrame {
     private void jLabel8MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseExited
         // TODO add your handling code here:
     }//GEN-LAST:event_jLabel8MouseExited
+
+    private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
+        if(currentPlaybackThread == null){
+            if(loop == false){
+                loop = true;
+                jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/loopon.png")));
+                jLabel9.setToolTipText("Stop the playback first!");
+            }else{
+                loop = false;
+                jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/loop.png")));
+                jLabel9.setToolTipText("Stop the playback first!");
+            }
+        }else{
+            JOptionPane.showMessageDialog(controlPanel, "Stop playback first to enable loop!");
+        }
+    }//GEN-LAST:event_jLabel9MouseClicked
+
+    private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
+        System.exit(0);
+    }//GEN-LAST:event_jPanel2MouseClicked
+
+    private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseClicked
+        setState(JFrame.ICONIFIED);
+    }//GEN-LAST:event_jPanel3MouseClicked
+
+    private void loopPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loopPanelMouseClicked
+        if(currentPlaybackThread == null){
+            if(loop == false){
+                loop = true;
+                jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/loopon.png")));
+                jLabel9.setToolTipText("Stop the playback first!");
+            }else{
+                loop = false;
+                jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/loop.png")));
+                jLabel9.setToolTipText("Stop the playback first!");
+            }
+        }else{
+            JOptionPane.showMessageDialog(controlPanel, "Stop playback first to enable loop!");
+        }
+    }//GEN-LAST:event_loopPanelMouseClicked
 
     /**
      * @param args the command line arguments
@@ -615,6 +719,7 @@ public class display extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -624,6 +729,7 @@ public class display extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JPanel listPanel;
+    private javax.swing.JPanel loopPanel;
     private javax.swing.JPanel lyricsPanel;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JPanel pausePanel;

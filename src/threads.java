@@ -10,6 +10,7 @@ import javazoom.jl.player.advanced.PlaybackListener;
 
 public class threads {
         private PlayerThread currentPlaybackThread;
+        private display displayInstance;
 
     public void stopPlayback() {
         if (currentPlaybackThread != null) {
@@ -30,7 +31,9 @@ public class threads {
             currentPlaybackThread.resumePlayback();
         }
     }
-
+        public void setDisplayInstance(display displayInstance) {
+            this.displayInstance = displayInstance;
+        }
     public class PlayerThread extends Thread {
         private String songFilePath;
         private boolean loop;
@@ -39,10 +42,12 @@ public class threads {
         private long totalSongLength;
         private boolean isPaused = false;
         private long pauseLocation = 0;
+        private display displayInstance;
 
-        public PlayerThread(String songFilePath, boolean loop) {
+        public PlayerThread(String songFilePath, boolean loop, display displayInstance) {
             this.songFilePath = songFilePath;
             this.loop = loop;
+            this.displayInstance = displayInstance;
         }
 
         public void stopPlayback() {
@@ -62,7 +67,6 @@ public class threads {
                 }
             }
         }
-
         public void resumePlayback() {
             try {
                 if (isPaused) {
@@ -94,7 +98,7 @@ public class threads {
             }
             this.interrupt();
         }
-
+        
         public void run() {
             try {
                 fis = new FileInputStream(songFilePath);
@@ -114,6 +118,9 @@ public class threads {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        }else{
+                            currentPlaybackThread = null;
+                            displayInstance.interrupt();
                         }
                     }
                 };
