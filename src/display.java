@@ -362,7 +362,6 @@ public class display extends javax.swing.JFrame {
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/mini.png"))); // NOI18N
         jLabel7.setMinimumSize(new java.awt.Dimension(10, 10));
-        jLabel7.setPreferredSize(new java.awt.Dimension(24, 29));
         jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel7MouseClicked(evt);
@@ -442,7 +441,7 @@ public class display extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -512,9 +511,10 @@ public class display extends javax.swing.JFrame {
         if (stat != "Paused") {
         stat = "Paused";
             currentPlaybackThread.pausePlayback();
+            jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/play.png")));
         } else {
             stat = "Playing";
-            System.out.println(stat);
+            jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/img/pause.png")));
             currentPlaybackThread.resumePlayback();
         }
     }//GEN-LAST:event_jLabel4MouseClicked
