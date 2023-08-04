@@ -34,7 +34,7 @@ SongBase is a Java-based music player application utilizing JLayer library that 
 
 Note: Before installing, make sure that your computer meets the minimum requirements for the software used. <br>
 
-## System Features
+## Dependencies/Libraries
 * JDK
 * JavaZoom JLayer library 
 
