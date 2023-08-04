@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 18, 2023 at 05:32 PM
+-- Generation Time: Aug 02, 2023 at 08:29 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -20,6 +20,34 @@ SET time_zone = "+00:00";
 --
 -- Database: `songbase`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `playlists`
+--
+
+CREATE TABLE `playlists` (
+  `list_id` int(11) NOT NULL,
+  `list_song_id` int(11) NOT NULL,
+  `list_title` varchar(255) NOT NULL,
+  `list_song_title` varchar(255) NOT NULL,
+  `list_song_artist` varchar(255) NOT NULL,
+  `list_song_duration` varchar(50) NOT NULL,
+  `list_song_fpath` varchar(255) NOT NULL,
+  `list_song_lyrfpath` varchar(255) NOT NULL,
+  `list_song_imgfpath` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `playlists`
+--
+
+INSERT INTO `playlists` (`list_id`, `list_song_id`, `list_title`, `list_song_title`, `list_song_artist`, `list_song_duration`, `list_song_fpath`, `list_song_lyrfpath`, `list_song_imgfpath`) VALUES
+(2, 2, 'Pop', 'Candy Paint', 'Post Malone', '03:47', 'src//resources//songs//Candy Paint.mp3', 'src//resources//lyrics//Candy Paint.txt', 'resources/img/candy-paint.png'),
+(4, 4, 'Pop', 'Kiss Kiss', 'MGK', '02:24', 'src//resources//songs//kiss kiss.mp3', 'src//resources//lyrics//Kiss Kiss.txt', 'resources/img/kiss-kiss.png'),
+(5, 1, 'Rock', 'Wake Me Up When September Ends', 'Green Day', '04:45', 'src//resources//songs//Wake Me Up When September Ends.mp3', 'src//resources//lyrics//Wake Me Up When September Ends.txt', 'resources/img/wake-me-up-when-september-ends.png'),
+(6, 4, 'try', 'Kiss Kiss', 'MGK', '02:24', 'src//resources//songs//kiss kiss.mp3', 'src//resources//lyrics//Kiss Kiss.txt', 'resources/img/kiss-kiss.png');
 
 -- --------------------------------------------------------
 
@@ -53,6 +81,12 @@ INSERT INTO `songs` (`song_id`, `song_title`, `song_artist`, `song_duration`, `s
 --
 
 --
+-- Indexes for table `playlists`
+--
+ALTER TABLE `playlists`
+  ADD PRIMARY KEY (`list_id`);
+
+--
 -- Indexes for table `songs`
 --
 ALTER TABLE `songs`
@@ -61,6 +95,12 @@ ALTER TABLE `songs`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `playlists`
+--
+ALTER TABLE `playlists`
+  MODIFY `list_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `songs`
